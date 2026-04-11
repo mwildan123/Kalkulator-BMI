@@ -1,0 +1,7 @@
+{
+  "name": "BmiCalculator",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
