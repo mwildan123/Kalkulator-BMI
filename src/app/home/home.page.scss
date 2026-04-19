@@ -1,17 +1,17 @@
 .main-container {
-    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     max-width: 450px;
     margin: 0 auto;
-    padding: 20px;
-    background: #fdfdfd;
+    padding: var(--ion-safe-area-top) 20px var(--ion-safe-area-bottom) 20px;
+    background: var(--ion-background-color, #ffffff);
 }
 
-// ANIMASI MASUK
 .input-form {
     animation: fadeIn 0.5s ease-out;
+    margin-top: 60px;
 }
 
 .result-container {
@@ -42,22 +42,32 @@
 
 // GENDER SELECTION
 .gender-card {
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
     border-radius: 24px;
-    background: #ffffff;
+    background: var(--ion-card-background, #ffffff);
     border: 2px solid #f1f5f9;
     transition: all 0.3s ease;
+    height: 140px;
+    margin-bottom: 20px;
     img {
-        width: 70px;
-        height: 70px;
-        margin-bottom: 10px;
+        width: 65px;
+        height: 65px;
+        margin-bottom: 8px;
         opacity: 0.4;
         transition: 0.3s;
+        object-fit: contain;
     }
     ion-label {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
         color: #94a3b8;
+        display: block;
+        width: 100%;
+        text-align: center;
     }
     &.active {
         border-color: #3880ff;
@@ -65,7 +75,7 @@
         transform: translateY(-3px);
         img {
             opacity: 1;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         ion-label {
             color: #3880ff;
@@ -101,30 +111,35 @@
     --background: #3880ff;
     box-shadow: 0 8px 20px rgba(56, 128, 255, 0.2);
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.95);
     }
 }
 
+// HASIL KALKULASI 
 .avatar-header {
-    margin-bottom: -40px;
+    margin-top: 60px;
+    margin-bottom: -35px;
     z-index: 5;
     position: relative;
+    display: flex;
+    justify-content: center;
     img {
-        width: 100px;
-        height: 100px;
+        width: 110px;
+        height: 110px;
         border-radius: 50%;
         background: #fff;
         padding: 4px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 }
 
 .result-card {
-    border-radius: 30px;
-    padding: 50px 15px 20px 15px;
+    border-radius: 35px;
+    padding: 50px 20px 30px 20px;
     background: #ffffff;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
     border: 1px solid #f1f5f9;
+    margin-top: 0;
 }
 
 .summary-box {
@@ -234,4 +249,59 @@ ion-button[fill="clear"] {
     --color: #64748b;
     font-weight: 700;
     margin-top: 10px;
+}
+
+
+/*MODE GELAP (DARK MODE)*/
+
+@media (prefers-color-scheme: dark) {
+    .main-container {
+        background: #121212 !important;
+    }
+    .gender-card {
+        background: #1e1e1e !important;
+        border-color: #333333 !important;
+        ion-label {
+            color: #888888 !important;
+        }
+        &.active {
+            background: rgba(56, 128, 255, 0.1) !important;
+            ion-label {
+                color: #3880ff !important;
+            }
+        }
+    }
+    .custom-input {
+        --background: #1e1e1e;
+        ion-label {
+            color: #aaaaaa;
+        }
+        ion-input {
+            color: #ffffff;
+        }
+    }
+    .result-card {
+        background: #1e1e1e !important;
+        border-color: #333333 !important;
+        h1,
+        p,
+        .sub-label {
+            color: #ffffff !important;
+        }
+    }
+    .summary-box {
+        background: #252525 !important;
+        small {
+            color: #aaaaaa !important;
+        }
+        p {
+            color: #ffffff !important;
+        }
+    }
+    .advice {
+        color: #aaaaaa !important;
+    }
+    .indicator .bubble {
+        background: #3880ff;
+    }
 }
