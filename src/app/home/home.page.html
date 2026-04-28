@@ -1,6 +1,11 @@
 <ion-content class="ion-padding no-scroll">
     <div class="main-container">
 
+        <div *ngIf="!showResult" class="header-section ion-text-center">
+            <h1 class="main-title">Kalkulator BMI</h1>
+            <p class="sub-title">Pantau kesehatan tubuhmu dengan mudah</p>
+        </div>
+
         <div *ngIf="!showResult" class="input-form">
             <div class="gender-selection ion-text-center">
                 <ion-row class="ion-justify-content-center">
@@ -74,7 +79,7 @@
                     <p class="advice">{{getSaran()}}</p>
 
                     <div class="ion-text-right">
-                        <ion-button fill="clear" color="danger" (click)="resetForm()">Cek Ulang</ion-button>
+                        <ion-button fill="clear" color="danger" (click)="resetForm()">CEK ULANG</ion-button>
                     </div>
                 </ion-card-content>
             </ion-card>

@@ -1,3 +1,5 @@
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { App } from '@capacitor/app';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +12,8 @@ import { IonicModule } from '@ionic/angular';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })
+
+
 export class HomePage {
   jenisKelamin: string = '';
   tinggi: number | null = null;
@@ -17,7 +21,21 @@ export class HomePage {
   hasilBMI: number = 0;
   showResult: boolean = false;
 
-  constructor() {}
+  constructor(private platform: Platform) {
+    this.initializeApp();
+  }
+
+initializeApp() {
+    this.platform.ready().then(() => {
+      App.addListener('backButton', () => {
+        if (this.showResult) {
+          this.showResult = false;
+        } else {
+          App.exitApp();
+        }
+      });
+    });
+  }
 
   isValidInput(): boolean {
     return this.jenisKelamin !== '' && 
