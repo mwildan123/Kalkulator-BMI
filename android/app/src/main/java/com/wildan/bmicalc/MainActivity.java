@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.wildan.bmicalc;
 
 import com.getcapacitor.BridgeActivity;
 

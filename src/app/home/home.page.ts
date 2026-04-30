@@ -1,9 +1,10 @@
-import { IonRouterOutlet, Platform } from '@ionic/angular';
-import { App } from '@capacitor/app';
+import { Platform } from '@ionic/angular';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-home',
@@ -20,21 +21,43 @@ export class HomePage {
   berat: number | null = null;
   hasilBMI: number = 0;
   showResult: boolean = false;
+  isNative: boolean = false;
 
   constructor(private platform: Platform) {
     this.initializeApp();
   }
 
-initializeApp() {
+  initializeApp() {
     this.platform.ready().then(() => {
-      App.addListener('backButton', () => {
-        if (this.showResult) {
-          this.showResult = false;
-        } else {
-          App.exitApp();
-        }
-      });
+      // Cek apakah running di native platform (hybrid = Android/iOS)
+      try {
+        this.isNative = this.platform.is('hybrid');
+      } catch (e) {
+        this.isNative = false;
+      }
+      
+      if (this.isNative) {
+        this.setupBackButton();
+      }
+    }).catch((err) => {
+      console.warn('Platform ready error:', err);
     });
+  }
+
+  setupBackButton() {
+    if (this.isNative) {
+      try {
+        App.addListener('backButton', () => {
+          if (this.showResult) {
+            this.showResult = false;
+          } else {
+            App.exitApp();
+          }
+        });
+      } catch (err) {
+        console.warn('Failed to setup back button:', err);
+      }
+    }
   }
 
   isValidInput(): boolean {
@@ -45,10 +68,28 @@ initializeApp() {
 
   hitungBMI(): void {
     if (this.isValidInput()) {
-      const tinggiMeter = (this.tinggi as number) / 100;
-      const bmi = (this.berat as number) / (tinggiMeter * tinggiMeter);
-      this.hasilBMI = parseFloat(bmi.toFixed(1));
-      this.showResult = true;
+      try {
+        const tinggiMeter = (this.tinggi as number) / 100;
+        
+        // Pencegahan division by zero
+        if (tinggiMeter <= 0) {
+          console.warn('Tinggi tidak valid');
+          return;
+        }
+        
+        const bmi = (this.berat as number) / (tinggiMeter * tinggiMeter);
+        
+        // Validasi hasil BMI
+        if (!isFinite(bmi) || isNaN(bmi)) {
+          console.warn('Perhitungan BMI tidak valid');
+          return;
+        }
+        
+        this.hasilBMI = parseFloat(bmi.toFixed(1));
+        this.showResult = true;
+      } catch (err) {
+        console.error('Error calculating BMI:', err);
+      }
     }
   }
 
@@ -69,6 +110,10 @@ initializeApp() {
   }
 
   calculateGaugePosition(): number {
+    // Handle initial state where BMI is 0 or invalid
+    if (!this.hasilBMI || this.hasilBMI < 10) {
+      return 0;
+    }
     const minBMI = 10;
     const maxBMI = 45;
     const boundedBMI = Math.max(minBMI, Math.min(maxBMI, this.hasilBMI));

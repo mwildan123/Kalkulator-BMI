@@ -11,7 +11,7 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    HomePage 
+    HomePage  // ✅ Import standalone component
   ],
   declarations: [] 
 })

@@ -47,17 +47,17 @@
 
             <ion-card class="result-card">
                 <ion-card-content class="ion-text-center">
-                    <p class="sub-label">BMI untuk {{jenisKelamin}}</p>
+                    <p class="sub-label">BMI untuk {{jenisKelamin === 'laki-laki' ? 'Laki-laki' : 'Perempuan'}}</p>
                     <h1 class="cat-label" [ngClass]="getBMIClass()">{{getKategoriBMI()}}</h1>
 
                     <ion-row class="summary-box">
                         <ion-col>
                             <small>Tinggi (cm)</small>
-                            <p><strong>{{tinggi}}</strong></p>
+                            <p><strong>{{tinggi || 0}}</strong></p>
                         </ion-col>
                         <ion-col>
                             <small>Berat (kg)</small>
-                            <p><strong>{{berat}}</strong></p>
+                            <p><strong>{{berat || 0}}</strong></p>
                         </ion-col>
                     </ion-row>
 
