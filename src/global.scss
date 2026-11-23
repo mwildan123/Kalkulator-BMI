@@ -35,3 +35,130 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+// ==========================================
+// AESTHETIC CONFIRMATION DIALOG (ION-ALERT)
+// ==========================================
+ion-alert.aesthetic-confirm-alert {
+  --backdrop-opacity: 0.55;
+
+  .alert-wrapper {
+    border-radius: 22px !important;
+    padding: 18px 16px 16px 16px !important;
+    max-width: 325px !important;
+    width: 90% !important;
+    background: #ffffff !important;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.9) !important;
+  }
+
+  .alert-head {
+    text-align: center !important;
+    padding: 8px 12px 6px 12px !important;
+
+    .alert-title {
+      font-size: 18px !important;
+      font-weight: 750 !important;
+      color: #0f172a !important;
+      letter-spacing: -0.02em !important;
+    }
+  }
+
+  .alert-message {
+    text-align: center !important;
+    font-size: 13px !important;
+    color: #64748b !important;
+    line-height: 1.5 !important;
+    padding: 4px 8px 20px 8px !important;
+  }
+
+  .alert-button-group {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    width: 100% !important;
+
+    button.alert-button {
+      height: 44px !important;
+      border-radius: 12px !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.15s ease !important;
+
+      .alert-button-inner {
+        justify-content: center !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      &.alert-btn-cancel {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        border: 1px solid #e2e8f0 !important;
+
+        &:active {
+          background: #e2e8f0 !important;
+          transform: scale(0.98) !important;
+        }
+      }
+
+      &.alert-btn-delete {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        border: 1px solid #fecaca !important;
+        font-weight: 700 !important;
+
+        &:active {
+          background: #fecaca !important;
+          transform: scale(0.98) !important;
+        }
+      }
+    }
+  }
+}
+
+// Dark Mode Support for Alert
+@media (prefers-color-scheme: dark) {
+  ion-alert.aesthetic-confirm-alert {
+    .alert-wrapper {
+      background: #18181b !important;
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px #27272a !important;
+    }
+
+    .alert-head .alert-title {
+      color: #fafafa !important;
+    }
+
+    .alert-message {
+      color: #a1a1aa !important;
+    }
+
+    .alert-button-group button.alert-button {
+      &.alert-btn-cancel {
+        background: #27272a !important;
+        color: #e4e4e7 !important;
+        border: 1px solid #3f3f46 !important;
+
+        &:active {
+          background: #3f3f46 !important;
+        }
+      }
+
+      &.alert-btn-delete {
+        background: rgba(220, 38, 38, 0.2) !important;
+        color: #f87171 !important;
+        border: 1px solid rgba(220, 38, 38, 0.4) !important;
+
+        &:active {
+          background: rgba(220, 38, 38, 0.3) !important;
+        }
+      }
+    }
+  }
+}

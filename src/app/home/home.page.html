@@ -1,89 +1,471 @@
-<ion-content class="ion-padding no-scroll">
-    <div class="main-container">
+<ion-content class="app-content" [fullscreen]="true">
+  <div class="main-container">
 
-        <div *ngIf="!showResult" class="header-section ion-text-center">
-            <h1 class="main-title">Kalkulator BMI</h1>
-            <p class="sub-title">Pantau kesehatan tubuhmu dengan mudah</p>
+    <!-- APP HEADER -->
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand-title-group">
+          <h1 class="app-title">Kalkulator BMI</h1>
+          <p class="app-subtitle">Pantau indeks massa tubuh &amp; target ideal</p>
+        </div>
+      </div>
+
+      <!-- SEGMENT NAVIGATION -->
+      <div class="nav-segment-wrapper">
+        <ion-segment [(ngModel)]="activeSegment" (ionChange)="triggerHaptic()" mode="ios" class="aesthetic-segment">
+          <ion-segment-button value="kalkulator">
+            <ion-icon name="calculator-outline"></ion-icon>
+            <ion-label>Hitung</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="riwayat">
+            <ion-icon name="time-outline"></ion-icon>
+            <ion-label>Riwayat</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="edukasi">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <ion-label>Panduan</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+    </header>
+
+    <!-- ==================== TAB 1: KALKULATOR ==================== -->
+    <main *ngIf="activeSegment === 'kalkulator'">
+
+      <!-- ================= INPUT FORM ================= -->
+      <section *ngIf="!showResult" class="form-container">
+
+        <!-- STANDARD SELECTOR PILL -->
+        <div class="standard-switch-card">
+          <div class="switch-meta">
+            <span class="meta-label">Standar Rujukan</span>
+            <span class="meta-desc">{{ standard === 'kemenkes' ? 'Standar Populasi Asia (Kemenkes RI)' : 'Standar Global Internasional (WHO)' }}</span>
+          </div>
+          <div class="switch-pills">
+            <button type="button" class="switch-pill" [class.selected]="standard === 'kemenkes'" (click)="setStandard('kemenkes')">
+              Kemenkes RI
+            </button>
+            <button type="button" class="switch-pill" [class.selected]="standard === 'who'" (click)="setStandard('who')">
+              WHO Global
+            </button>
+          </div>
         </div>
 
-        <div *ngIf="!showResult" class="input-form">
-            <div class="gender-selection ion-text-center">
-                <ion-row class="ion-justify-content-center">
-                    <ion-col size="5">
-                        <div class="gender-card" [class.active]="jenisKelamin === 'laki-laki'" (click)="jenisKelamin = 'laki-laki'">
-                            <img src="assets/icon/male.PNG" alt="Male" />
-                            <ion-label style="font-size: 12px; white-space: nowrap;">Laki-laki</ion-label>
-                        </div>
-                    </ion-col>
-                    <ion-col size="5">
-                        <div class="gender-card" [class.active]="jenisKelamin === 'perempuan'" (click)="jenisKelamin = 'perempuan'">
-                            <img src="assets/icon/female.PNG" alt="Female" />
-                            <ion-label style="font-size: 12px; white-space: nowrap;">Perempuan</ion-label>
-                        </div>
-                    </ion-col>
-                </ion-row>
+        <!-- GENDER SELECTION -->
+        <div class="gender-selection-row">
+          <button type="button" class="gender-btn" [class.active]="jenisKelamin === 'laki-laki'" (click)="selectGender('laki-laki')">
+            <div class="gender-avatar-wrap">
+              <img src="assets/icon/male.PNG" alt="Laki-laki" />
             </div>
+            <span class="gender-label">Laki-laki</span>
+          </button>
 
-            <div class="input-group">
-                <ion-item lines="full" class="custom-input">
-                    <ion-label position="stacked">Tinggi (cm) *</ion-label>
-                    <ion-input type="number" [(ngModel)]="tinggi" placeholder="Contoh: 170"></ion-input>
-                </ion-item>
-                <ion-item lines="full" class="custom-input">
-                    <ion-label position="stacked">Berat (kg) *</ion-label>
-                    <ion-input type="number" [(ngModel)]="berat" placeholder="Contoh: 50"></ion-input>
-                </ion-item>
+          <button type="button" class="gender-btn" [class.active]="jenisKelamin === 'perempuan'" (click)="selectGender('perempuan')">
+            <div class="gender-avatar-wrap">
+              <img src="assets/icon/female.PNG" alt="Perempuan" />
             </div>
-
-            <ion-button expand="block" shape="round" class="hit-btn" (click)="hitungBMI()" [disabled]="!isValidInput()">
-                HITUNG BMI
-            </ion-button>
+            <span class="gender-label">Perempuan</span>
+          </button>
         </div>
 
-        <div *ngIf="showResult" class="result-container">
-            <div class="avatar-header ion-text-center">
-                <img [src]="jenisKelamin === 'laki-laki' ? 'assets/icon/male.PNG' : 'assets/icon/female.PNG'" />
+        <!-- NUMERIC STEPPER CARDS -->
+        <div class="metric-inputs-stack">
+
+          <!-- TINGGI BADAN -->
+          <div class="metric-input-card">
+            <div class="card-top-label">
+              <ion-icon name="body-outline"></ion-icon>
+              <span>TINGGI BADAN</span>
             </div>
+            <div class="hero-stepper-row">
+              <button type="button" class="stepper-btn" (click)="adjustValue('tinggi', -1)" aria-label="Kurangi 1 cm">
+                <ion-icon name="remove-outline"></ion-icon>
+              </button>
+              <div class="value-display">
+                <input type="number" [(ngModel)]="tinggi" placeholder="170" min="50" max="250" class="clean-number-input" />
+                <span class="unit-text">cm</span>
+              </div>
+              <button type="button" class="stepper-btn" (click)="adjustValue('tinggi', 1)" aria-label="Tambah 1 cm">
+                <ion-icon name="add-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
 
-            <ion-card class="result-card">
-                <ion-card-content class="ion-text-center">
-                    <p class="sub-label">BMI untuk {{jenisKelamin === 'laki-laki' ? 'Laki-laki' : 'Perempuan'}}</p>
-                    <h1 class="cat-label" [ngClass]="getBMIClass()">{{getKategoriBMI()}}</h1>
+          <!-- BERAT BADAN -->
+          <div class="metric-input-card">
+            <div class="card-top-label">
+              <ion-icon name="scale-outline"></ion-icon>
+              <span>BERAT BADAN</span>
+            </div>
+            <div class="hero-stepper-row">
+              <button type="button" class="stepper-btn" (click)="adjustValue('berat', -0.5)" aria-label="Kurangi 0.5 kg">
+                <ion-icon name="remove-outline"></ion-icon>
+              </button>
+              <div class="value-display">
+                <input type="number" step="0.5" [(ngModel)]="berat" placeholder="65" min="20" max="300" class="clean-number-input" />
+                <span class="unit-text">kg</span>
+              </div>
+              <button type="button" class="stepper-btn" (click)="adjustValue('berat', 0.5)" aria-label="Tambah 0.5 kg">
+                <ion-icon name="add-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
 
-                    <ion-row class="summary-box">
-                        <ion-col>
-                            <small>Tinggi (cm)</small>
-                            <p><strong>{{tinggi || 0}}</strong></p>
-                        </ion-col>
-                        <ion-col>
-                            <small>Berat (kg)</small>
-                            <p><strong>{{berat || 0}}</strong></p>
-                        </ion-col>
-                    </ion-row>
+          <!-- USIA -->
+          <div class="metric-input-card">
+            <div class="card-top-label">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>USIA</span>
+            </div>
+            <div class="hero-stepper-row">
+              <button type="button" class="stepper-btn" (click)="adjustValue('usia', -1)" aria-label="Kurangi 1 tahun">
+                <ion-icon name="remove-outline"></ion-icon>
+              </button>
+              <div class="value-display">
+                <input type="number" [(ngModel)]="usia" placeholder="22" min="5" max="120" class="clean-number-input" />
+                <span class="unit-text">tahun</span>
+              </div>
+              <button type="button" class="stepper-btn" (click)="adjustValue('usia', 1)" aria-label="Tambah 1 tahun">
+                <ion-icon name="add-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
 
-                    <div class="gauge-wrapper">
-                        <div class="bar-container">
-                            <div class="bar">
-                                <div class="seg s-kurang"></div>
-                                <div class="seg s-normal"></div>
-                                <div class="seg s-kegemukan"></div>
-                                <div class="seg s-obesitas"></div>
-                            </div>
-                            <div class="indicator" [style.left.%]="calculateGaugePosition()">
-                                <div class="bubble">{{hasilBMI}}</div>
-                                <div class="arrow-down"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="advice">{{getSaran()}}</p>
-
-                    <div class="ion-text-right">
-                        <ion-button fill="clear" color="danger" (click)="resetForm()">CEK ULANG</ion-button>
-                    </div>
-                </ion-card-content>
-            </ion-card>
         </div>
 
-    </div>
+        <!-- CALCULATE CTA -->
+        <button type="button" class="action-cta-btn" (click)="hitungBMI()" [disabled]="!isValidInput()">
+          <span>Hitung Indeks Massa Tubuh</span>
+        </button>
+
+      </section>
+
+      <!-- ================= RESULT DISPLAY ================= -->
+      <section *ngIf="showResult" class="result-container">
+
+        <!-- TOP BAR BACK -->
+        <div class="result-navigation-bar">
+          <button type="button" class="nav-back-button" (click)="resetForm()">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+            <span>Ubah Data</span>
+          </button>
+          <span class="standard-indicator-tag">{{ standard === 'kemenkes' ? 'Kemenkes RI (Asia)' : 'WHO Global' }}</span>
+        </div>
+
+        <!-- MAIN HERO CARD -->
+        <div class="hero-result-card">
+
+          <!-- AVATAR & GENDER -->
+          <div class="avatar-hero-container">
+            <div class="avatar-circle">
+              <img [src]="jenisKelamin === 'laki-laki' ? 'assets/icon/male.PNG' : 'assets/icon/female.PNG'" alt="Gender Avatar" />
+            </div>
+          </div>
+
+          <!-- SCORE HERO -->
+          <div class="score-hero-block">
+            <span class="caption-label">HASIL PERHITUNGAN</span>
+            <div class="score-figure-wrap">
+              <span class="score-hero-number" [ngClass]="getBMIClass()">{{hasilBMI}}</span>
+              <span class="score-hero-unit">kg/m²</span>
+            </div>
+            <div class="aesthetic-status-pill" [ngClass]="getBMIBadgeClass()">
+              <span class="status-dot"></span>
+              <span class="status-name">{{getKategoriBMI()}}</span>
+            </div>
+          </div>
+
+          <!-- GAUGE BAR VISUALIZER -->
+          <div class="gauge-card-block">
+            <div class="gauge-rail-wrapper">
+              <div class="gauge-rail">
+                <div class="rail-segment s-under" title="Kurus"></div>
+                <div class="rail-segment s-normal" title="Normal"></div>
+                <div class="rail-segment s-over" title="Kelebihan BB"></div>
+                <div class="rail-segment s-obese" title="Obesitas"></div>
+              </div>
+              <!-- PIN BUBBLE -->
+              <div class="gauge-pin" [style.left.%]="calculateGaugePosition()">
+                <div class="pin-bubble">{{hasilBMI}}</div>
+                <div class="pin-pointer"></div>
+              </div>
+            </div>
+
+            <!-- TICKS & SCALE -->
+            <div class="gauge-ticks-row">
+              <div class="tick-col text-left">
+                <span class="tick-label">&lt; 18.5</span>
+                <span class="tick-sub">Kurus</span>
+              </div>
+              <div class="tick-col text-center">
+                <span class="tick-label">{{ standard === 'kemenkes' ? '18.5–22.9' : '18.5–24.9' }}</span>
+                <span class="tick-sub">Normal</span>
+              </div>
+              <div class="tick-col text-center">
+                <span class="tick-label">{{ standard === 'kemenkes' ? '23.0–24.9' : '25.0–29.9' }}</span>
+                <span class="tick-sub">Lebih</span>
+              </div>
+              <div class="tick-col text-right">
+                <span class="tick-label">&ge; {{ standard === 'kemenkes' ? '25.0' : '30.0' }}</span>
+                <span class="tick-sub">Obesitas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 KEY HEALTH METRICS -->
+          <div class="metrics-quad-grid">
+            <div class="quad-item">
+              <span class="q-label">RENTANG IDEAL</span>
+              <span class="q-val">{{getRentangIdeal().min}} – {{getRentangIdeal().max}} <small>kg</small></span>
+            </div>
+
+            <div class="quad-item">
+              <span class="q-label">STATUS TARGET</span>
+              <span class="q-val">{{getStatusTargetIdeal().message}}</span>
+            </div>
+
+            <div class="quad-item">
+              <span class="q-label">BMR (KALORI DASAR)</span>
+              <span class="q-val">{{getBMR()}} <small>kkal/hari</small></span>
+            </div>
+
+            <div class="quad-item">
+              <span class="q-label">TARGET AIR HARIAN</span>
+              <span class="q-val">{{getKebutuhanAir().liter}} <small>Liter ({{getKebutuhanAir().gelas}} gelas)</small></span>
+            </div>
+          </div>
+
+          <!-- HEALTH RECOMMENDATIONS (CARD INSETS) -->
+          <div class="recommendations-section">
+            <h4 class="recom-section-title">Rekomendasi Pola Hidup</h4>
+
+            <div class="recom-card">
+              <div class="recom-icon-col">
+                <ion-icon name="restaurant-outline"></ion-icon>
+              </div>
+              <div class="recom-content-col">
+                <span class="recom-tag">Pola Makan &amp; Nutrisi</span>
+                <p>{{getDetailedAdvice().diet}}</p>
+              </div>
+            </div>
+
+            <div class="recom-card">
+              <div class="recom-icon-col">
+                <ion-icon name="fitness-outline"></ion-icon>
+              </div>
+              <div class="recom-content-col">
+                <span class="recom-tag">Aktivitas Fisik &amp; Olahraga</span>
+                <p>{{getDetailedAdvice().fitness}}</p>
+              </div>
+            </div>
+
+            <div class="recom-card">
+              <div class="recom-icon-col">
+                <ion-icon name="water-outline"></ion-icon>
+              </div>
+              <div class="recom-content-col">
+                <span class="recom-tag">Hidrasi &amp; Istirahat</span>
+                <p>{{getDetailedAdvice().lifestyle}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="result-action-stack">
+            <button type="button" class="action-cta-btn save-btn" (click)="saveCurrentResult()" [disabled]="savedInCurrentSession">
+              <ion-icon [name]="savedInCurrentSession ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+              <span>{{ savedInCurrentSession ? 'Tersimpan di Riwayat' : 'Simpan ke Riwayat' }}</span>
+            </button>
+
+            <button type="button" class="aesthetic-outline-btn" (click)="resetForm()">
+              <ion-icon name="refresh-outline"></ion-icon>
+              <span>Hitung Ulang</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ==================== TAB 2: RIWAYAT ==================== -->
+    <main *ngIf="activeSegment === 'riwayat'" class="history-container">
+      <div class="tab-header-row">
+        <div>
+          <h2 class="tab-title">Riwayat Pengukuran</h2>
+          <p class="tab-subtitle">{{historyList.length}} catatan tersimpan di perangkat ini</p>
+        </div>
+        <button *ngIf="historyList.length > 0" type="button" class="text-danger-action" (click)="confirmClearHistory()">
+          Hapus Semua
+        </button>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div *ngIf="historyList.length === 0" class="aesthetic-empty-card">
+        <div class="empty-icon-circle">
+          <ion-icon name="time-outline"></ion-icon>
+        </div>
+        <h3>Belum Ada Catatan</h3>
+        <p>Hasil perhitungan BMI yang kamu simpan akan muncul rapi di sini.</p>
+        <button type="button" class="action-cta-btn compact" (click)="activeSegment = 'kalkulator'">
+          Hitung Sekarang
+        </button>
+      </div>
+
+      <!-- HISTORY LIST -->
+      <div *ngIf="historyList.length > 0" class="history-cards-stack">
+        <div *ngFor="let item of historyList" class="history-row-card">
+          <div class="history-card-top">
+            <div class="user-meta-group">
+              <img [src]="item.gender === 'laki-laki' ? 'assets/icon/male.PNG' : 'assets/icon/female.PNG'" class="meta-avatar" alt="Avatar" />
+              <div class="meta-texts">
+                <span class="meta-date">{{item.tanggal}}</span>
+                <span class="meta-standard">{{item.standard === 'kemenkes' ? 'Kemenkes RI' : 'WHO Global'}}</span>
+              </div>
+            </div>
+            <button type="button" class="icon-delete-btn" (click)="deleteHistoryItem(item.id)" aria-label="Hapus item">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+          <div class="history-card-details">
+            <div class="score-side">
+              <span class="history-score-hero" [ngClass]="item.kategoriClass">{{item.bmi}}</span>
+              <span class="history-cat-badge" [ngClass]="item.kategoriClass">{{item.kategori}}</span>
+            </div>
+            <div class="stats-side">
+              <div class="stat-bullet">TB: <strong>{{item.tinggi}} cm</strong></div>
+              <div class="stat-bullet">BB: <strong>{{item.berat}} kg</strong></div>
+              <div class="stat-bullet">Usia: <strong>{{item.usia}} th</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==================== TAB 3: EDUKASI / PANDUAN ==================== -->
+    <main *ngIf="activeSegment === 'edukasi'" class="education-container">
+      <div class="tab-header-row">
+        <div>
+          <h2 class="tab-title">Panduan Indeks Massa Tubuh</h2>
+          <p class="tab-subtitle">Dasar perhitungan &amp; standar kesehatan resmi</p>
+        </div>
+      </div>
+
+      <!-- PENJELASAN FORMULA -->
+      <div class="guide-card">
+        <h3 class="guide-heading">Apa itu Indeks Massa Tubuh?</h3>
+        <p class="guide-paragraph">
+          Indeks Massa Tubuh (BMI / IMT) adalah indikator sederhana perbandingan berat badan terhadap kuadrat tinggi badan untuk mengkategorikan status gizi dan risiko kesehatan terkait berat badan pada orang dewasa.
+        </p>
+        <div class="formula-pill">
+          <code>BMI = Berat Badan (kg) / [Tinggi Badan (m)]²</code>
+        </div>
+      </div>
+
+      <!-- TABEL KEMENKES RI -->
+      <div class="guide-card">
+        <div class="guide-card-header">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <h3>1. Standar Kemenkes RI (Populasi Asia)</h3>
+        </div>
+        <p class="guide-paragraph">
+          Sesuai panduan Kementerian Kesehatan RI, batas ambang obesitas untuk populasi Asia diturunkan karena komposisi tubuh orang Asia umumnya memiliki persentase lemak lebih tinggi pada angka BMI yang sama.
+        </p>
+        <div class="table-frame">
+          <table class="aesthetic-table">
+            <thead>
+              <tr>
+                <th>Kategori</th>
+                <th>BMI (kg/m²)</th>
+                <th>Tingkat Risiko</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kurus (Underweight)</td>
+                <td>&lt; 18.5</td>
+                <td>Risiko Kurang Nutrisi</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>Normal (Ideal)</strong></td>
+                <td><strong>18.5 – 22.9</strong></td>
+                <td><strong>Rendah (Ideal)</strong></td>
+              </tr>
+              <tr>
+                <td>Kelebihan BB</td>
+                <td>23.0 – 24.9</td>
+                <td>Meningkat</td>
+              </tr>
+              <tr>
+                <td>Obesitas Tingkat 1</td>
+                <td>25.0 – 29.9</td>
+                <td>Tinggi</td>
+              </tr>
+              <tr>
+                <td>Obesitas Tingkat 2</td>
+                <td>&ge; 30.0</td>
+                <td>Sangat Tinggi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABEL WHO GLOBAL -->
+      <div class="guide-card">
+        <div class="guide-card-header">
+          <ion-icon name="swap-horizontal-outline"></ion-icon>
+          <h3>2. Standar WHO Global (Internasional)</h3>
+        </div>
+        <div class="table-frame">
+          <table class="aesthetic-table">
+            <thead>
+              <tr>
+                <th>Kategori</th>
+                <th>BMI (kg/m²)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kurus (Underweight)</td>
+                <td>&lt; 18.5</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>Normal (Healthy Weight)</strong></td>
+                <td><strong>18.5 – 24.9</strong></td>
+              </tr>
+              <tr>
+                <td>Pra-Obesitas (Overweight)</td>
+                <td>25.0 – 29.9</td>
+              </tr>
+              <tr>
+                <td>Obesitas Kelas 1</td>
+                <td>30.0 – 34.9</td>
+              </tr>
+              <tr>
+                <td>Obesitas Kelas 2</td>
+                <td>35.0 – 39.9</td>
+              </tr>
+              <tr>
+                <td>Obesitas Ekstrem Kelas 3</td>
+                <td>&ge; 40.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KETERBATASAN -->
+      <div class="guide-card notice-box">
+        <h4>Catatan Penting:</h4>
+        <p>
+          BMI adalah alat skrining awal dan tidak memperhitungkan distribusi massa otot versus massa lemak. Atlet binaraga dengan massa otot tinggi bisa terkategori overweight pada kalkulasi BMI biasa. Konsultasikan dengan dokter spesialis gizi untuk evaluasi klinis mendalam.
+        </p>
+      </div>
+
+    </main>
+
+  </div>
 </ion-content>
