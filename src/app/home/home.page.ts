@@ -384,7 +384,7 @@ export class HomePage implements OnInit {
     } else {
       return {
         diet: 'Konsultasikan dengan dokter spesialis gizi untuk rencana diet medis terstruktur. Kurangi konsumsi makanan cepat saji dan ultra-processed food.',
-        fitness: 'Mulai aktivitas dengan intensitas rendah ramah sendi seperti berenang, jalan santai di air, atau sepeda statis.',
+        fitness: 'Mulai aktivitas fisik dengan intensitas rendah yang ramah sendi seperti jalan santai, berenang, atau sepeda statis.',
         lifestyle: 'Pantau tekanan darah dan kadar gula darah secara berkala, serta perhatikan kualitas tidur.'
       };
     }
